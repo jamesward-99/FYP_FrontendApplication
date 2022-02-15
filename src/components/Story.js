@@ -11,38 +11,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Activity() {
+export default function Story() {
 
     const classes = useStyles();
     const paperStyle = {padding: '50px 20px', width:600, margin:"20px auto"}
     
     const[title, setTitle]=useState('')
     const[date, setDate]=useState('')
-    const[time, setTime]=useState('')
     const[location, setLocation]=useState('')
     const[category, setCategory]=useState('')
     const[description, setDescription]=useState('')
-    const[activities, setActivities]=useState([])
+    const[stories, setStories]=useState([])
 
     const handleClick=(e)=>{
         e.preventDefault()
-        const activity={title, date, time, location, category, description}
-        console.log(activity)
-        fetch("http://localhost:8080/activity/addActivity",{
+        const story={title, date, location, category, description}
+        console.log(story)
+        fetch("http://localhost:8080/story/addStory",{
             method:"POST",
             headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(activity)
+            body:JSON.stringify(story)
         }).then(()=>{
-            console.log("New Activity Added!")
+            console.log("New Story Added!")
 
         })
     }
 
     useEffect(()=>{
-        fetch("http://localhost:8080/activity/getAllActivities")
+        fetch("http://localhost:8080/story/getAllStories")
         .then(res=>res.json())
         .then((result)=>{
-          setActivities(result);
+            setStories(result);
         }
     )
     },[])
@@ -50,19 +49,15 @@ export default function Activity() {
     return (
     <Container>
         <Paper elevation={3} style={paperStyle}>
-            <h1>Add Activity</h1>
+            <h1>Add Story</h1>
             <form className={classes.root} noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="Activity Title" variant="outlined" fullWidth
+                <TextField id="outlined-basic" label="Story Title" variant="outlined" fullWidth
                 value={title}
                 onChange={(e)=>setTitle(e.target.value)}
                 />
                 <TextField id="outlined-basic" label="Date" variant="outlined" 
                 value={date}
                 onChange={(e)=>setDate(e.target.value)}
-                />
-                <TextField id="outlined-basic" label="Time" variant="outlined" 
-                value={time}
-                onChange={(e)=>setTime(e.target.value)}
                 />
                 <TextField id="outlined-basic" label="Location" variant="outlined"
                 value={location}
@@ -81,16 +76,15 @@ export default function Activity() {
                 </Button>
             </form>
         </Paper>
-        <h1>Activities</h1>
+        <h1>Stories</h1>
         <Paper elevation={3} style={paperStyle}>
-          {activities.map(activity=>(
-            <Paper elevation={6} style={{margin:"10px", padding: "15px", textAlign:"left"}} key={activity.id}>
-              Activity Title: {activity.title}<br/>
-              Date: {activity.date}<br/>
-              Time: {activity.time}<br/>
-              Location: {activity.location}<br/>
-              Category: {activity.category}<br/>
-              Description: {activity.description}<br/>
+          {stories.map(story=>(
+            <Paper elevation={6} style={{margin:"10px", padding: "15px", textAlign:"left"}} key={story.id}>
+                Activity Title: {story.title}<br/>
+                Date: {story.date}<br/>
+                Location: {story.location}<br/>
+                Category: {story.category}<br/>
+                Description: {story.description}<br/>
             </Paper>
           ))}
         </Paper>

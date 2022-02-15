@@ -3,9 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home';
+import PersonIcon from '@material-ui/icons/Person';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,6 +19,10 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  appBarRight: {
+    display: 'flex',
+    marginRight: theme.spacing(2),
+  },
 }));
 
 export default function Appbar() {
@@ -26,13 +32,26 @@ export default function Appbar() {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            Project View
+          <Typography variant="h6" edge="start" className={classes.title}>
+            Community Web-Tool
           </Typography>
-          <Button color="inherit">Login</Button>
+          <div className={classes.appBarRight}>
+            <Link to="/">
+              <IconButton aria-label="search" color="inherit">
+                <HomeIcon />
+              </IconButton>
+            </Link>
+            <Link to="/">
+              <IconButton aria-label="profile" color="inherit">
+                <PersonIcon/>
+              </IconButton>
+            </Link>
+            <Link to="/">
+              <IconButton aria-label="logout" edge="end" color="inherit">
+                <ExitToAppIcon/>
+              </IconButton>
+            </Link>
+          </div>
         </Toolbar>
       </AppBar>
     </div>
