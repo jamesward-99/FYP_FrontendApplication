@@ -15,9 +15,6 @@ const useStyles = makeStyles({
     title: {
       fontSize: 24,
     },
-    pos: {
-      marginBottom: 2,
-    },
     gridContainer: {
         paddingTop: '180px',
         paddingLeft: '180px',

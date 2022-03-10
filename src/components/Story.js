@@ -55,9 +55,14 @@ export default function Story() {
                 value={title}
                 onChange={(e)=>setTitle(e.target.value)}
                 />
-                <TextField id="outlined-basic" label="Date" variant="outlined" 
-                value={date}
-                onChange={(e)=>setDate(e.target.value)}
+                <TextField id="date" label="Date" type="date" variant="outlined"
+                  defaultValue="2017-05-24"
+                  className={classes.textField}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  value={date}
+                  onChange={(e)=>setDate(e.target.value)}
                 />
                 <TextField id="outlined-basic" label="Location" variant="outlined"
                 value={location}
