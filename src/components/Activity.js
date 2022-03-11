@@ -10,8 +10,8 @@ import Card from '@material-ui/core/Card';
 import ButtonBase from '@material-ui/core/ButtonBase';
 //import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
+//import Typography from '@material-ui/core/Typography';
 //import { CardActionArea, Grid } from '@material-ui/core';
-//
 import ActivityService from '../services/ActivityService';
 
 
@@ -31,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: '5px',
     margin: "15px",
     fontSize: 45
+  },
+  activityCardTitle: {
+    fontSize: 12,
   },
   margin: {
     margin: theme.spacing(0.5),
@@ -52,7 +55,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Activity() {
   
-
     const classes = useStyles();
     const paperStyle = {padding: '50px 100px', width:600, margin:"20px auto"}
 
@@ -60,7 +62,7 @@ export default function Activity() {
       {
         label: '-'
       },
-      {
+      { 
         value: 'Recreational',
         label: 'Recreational',
       },
@@ -89,11 +91,12 @@ export default function Activity() {
     const[category, setCategory]=useState('')
     const[description, setDescription]=useState('')
     const[activities, setActivities]=useState([])
-    const[activity, setActivity]=useState([]) ////
+    const[activity, setActivity]=useState([]) 
 
     const [open, setOpen] = React.useState(false);
-    const [openCard, setOpenCard] = React.useState(false);//
+    const [openCard, setOpenCard] = React.useState(false);
   
+    // Create an activity
     const handleClick=(e)=>{
         e.preventDefault()
         const activity={title, date, time, location, category, description}
@@ -105,9 +108,11 @@ export default function Activity() {
         }).then(()=>{
             console.log("New Activity Added!")
             setOpen(false);
+            window.location.reload(false);
           })
     }
 
+    // Retrieves all activities
     useEffect(()=>{
         fetch("http://localhost:8080/activity/getAllActivities")
         .then(res=>res.json())
@@ -117,27 +122,18 @@ export default function Activity() {
     )
     },[])
 
-  /*  useEffect(()=>{
-      fetch("http://localhost:8080/activity/34")
-      .then(res=>res.json())
-      .then((result)=>{
-        setActivity(result);
-      }
-  )
-  },[])*/
-
     // Open Dialog form to create an Activity
     const handleClickOpen = () => {
       setOpen(true);
     };
 
+    // Close Dialog
     const handleClose = () => {
       setOpen(false);
     };
 
-    //const ACTIVITY_API_BASE_URL = "http://localhost:8080/activity";
-    // Open Dialog form to view Activities
-    const handleCardClickOpen=(id)=> {//
+    // Open Dialog form to view that activity
+    const handleCardClickOpen=(id)=> {
       setOpenCard(true);
       console.log(id);
       ActivityService.getActivityById(id)
@@ -146,7 +142,7 @@ export default function Activity() {
       })
     };
     
-
+    // Close Dialog form of that activity
     const handleCardClickClose = () => {
       setOpenCard(false);
     };
@@ -236,15 +232,14 @@ export default function Activity() {
           {activities.map(activity=>(
             <ButtonBase key={activity.id} onClick={() => handleCardClickOpen(activity.id)}>
               <Card elevation={10} key={activity.id} className={classes.cardStyle} onClick={() => handleCardClickOpen(activity.id)}>
-                Activity Title: {activity.title}<br/>
-                Date: {activity.date}<br/>
-                Location: {activity.location}<br/>
-                Category: {activity.category}<br/>
+                  Title: {activity.title}<br/>
+                  Date: {activity.date}<br/>
+                  Location: {activity.location}<br/>
+                  Category: {activity.category}<br/>
               </Card>
             </ButtonBase>
           ))}
       </Grid>
-      
       <Dialog open={openCard} onClose={handleCardClickClose} aria-labelledby="form-dialog-title">
         <Paper elevation={3} style={paperStyle}>
           <h3>{activity.title}</h3>

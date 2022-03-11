@@ -42,7 +42,7 @@ const useStyles = makeStyles({
             </Card> 
         </Grid> 
         <Grid item xs={12} sm={4}>
-            <Card className={classes.root} variant="outlined">
+            <Card className={classes.root} elevation={6} variant="outlined">
                 <CardActionArea href="/story">
                     <CardContent>
                         <Typography className={classes.title} color="textSecondary" gutterBottom>
