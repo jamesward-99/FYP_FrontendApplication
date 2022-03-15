@@ -51,7 +51,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Story() {
 
     const classes = useStyles();
-    const paperStyle = {padding: '50px 20px', width:600, margin:"20px auto"}
+    //const paperStyle = {padding: '50px 20px', width:600, margin:"20px auto"}
+    const paperStyle = {padding: '50px 100px', width:600, margin:"20px auto"}
 
     const categories = [
       {
@@ -120,6 +121,7 @@ export default function Story() {
       setOpen(true);
     };
 
+    // Close Dialog
     const handleClose = () => {
       setOpen(false);
     };
@@ -221,7 +223,6 @@ export default function Story() {
           <h3>{story.title}</h3>
           <Card elevation={6} id={story.id} className={classes.cardStyle} key={story.id} onClick={handleCardClickOpen}>
             <h5>Date</h5>{story.date}<br/>
-            <h5>Time</h5> {story.time}<br/>
             <h5>Location</h5> {story.location}<br/>
             <h5>Category</h5> {story.category}<br/>
             <h5>Description</h5> {story.description}<br/>
