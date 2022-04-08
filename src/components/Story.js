@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import { Container, Paper, Button } from '@material-ui/core';
+import { Container, Paper, Button, Typography } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
+import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import SendIcon from '@material-ui/icons/Send';
+import EditIcon from '@material-ui/icons/Edit';
 import StoryService from '../services/StoryService';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,18 +18,18 @@ const useStyles = makeStyles((theme) => ({
       margin: theme.spacing(1)
     },
   },
-  activityButtons: {
+  storyButtons: {
     paddingTop: '50px',
     paddingLeft: '150px',
     paddingRight: '80px',
   },
-  activityTitle: {
+  storyTitle: {
     paddingTop: '15px',
     paddingLeft: '5px',
     margin: "15px",
     fontSize: 45
   },
-  activityCardTitle: {
+  storyCardTitle: {
     fontSize: 12,
   },
   margin: {
@@ -51,8 +53,16 @@ const useStyles = makeStyles((theme) => ({
 export default function Story() {
 
     const classes = useStyles();
-    //const paperStyle = {padding: '50px 20px', width:600, margin:"20px auto"}
-    const paperStyle = {padding: '50px 100px', width:600, margin:"20px auto"}
+
+    const paperStyle = {
+      alignItems: 'center', 
+      padding: '50px 100px', 
+      minHeight: 500, 
+      maxHeight: 1200, 
+      minWidth: 500, 
+      maxWidth: 1200, 
+      margin:"20px auto"
+    }
 
     const categories = [
       {
@@ -73,6 +83,18 @@ export default function Story() {
         value: 'Clean Up',
         label: 'Clean Up',
       },
+      {
+        value: 'Entertainment',
+        label: 'Entertainment',
+      },
+      {
+        value: 'Classes',
+        label: 'Classes',
+      },
+      {
+        value: 'Projects',
+        label: 'Projects',
+      },
     ];
     
     const[title, setTitle]=useState('')
@@ -85,16 +107,16 @@ export default function Story() {
 
     const [open, setOpen] = React.useState(false);
     const [openCard, setOpenCard] = React.useState(false);
+    const [openEditCard, setOpenEditCard] = React.useState(false);
 
     const handleCategory = (event) => {
       setCategory(event.target.value);
     };
 
-    // Create an story
+    // Create a story
     const handleClick=(e)=>{
         e.preventDefault()
         const story={title, date, location, category, description}
-        console.log(story)
         fetch("http://localhost:8080/story/addStory",{
             method:"POST",
             headers:{"Content-Type":"application/json"},
@@ -141,12 +163,36 @@ export default function Story() {
       setOpenCard(false);
     };
 
-    return (
+    // Update a story
+    const updateCardClick = (id) => {
+      const story={title, date, location, category, description}
+      fetch("http://localhost:8080/story/"+id,{
+          method:"PUT",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(story)
+      }).then(()=>{
+          console.log("Story Updated!")
+          setOpenEditCard(false);
+          window.location.reload(false);
+        })
+    }
+
+    // Open Edit Dialog form of that story
+    const handleEditCardOpen = () => {
+      setOpenEditCard(true);
+    };
+
+    // Close Edit Dialog
+    const handleEditCardClose = () => {
+      setOpenEditCard(false);
+    };
+
+  return (
     <Container>
-      <div className={classes.activityTitle}>
+      <div className={classes.storyTitle}>
         Welcome to Stories!
       </div>
-      <Box className={classes.activityButtons} component="span">
+      <Box className={classes.storyButtons} component="span">
         <Button className={classes.margin} variant="contained" color="primary" href="/story">
           All Stories
         </Button>
@@ -157,82 +203,151 @@ export default function Story() {
           My Stories
         </Button>
       </Box>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <Paper elevation={3} style={paperStyle}>
-            <h1>Add Story</h1>
-            <form className={classes.root} noValidate autoComplete="off">
-                <TextField id="outlined-basic" label="Story Title" variant="outlined" fullWidth
-                value={title}
-                onChange={(e)=>setTitle(e.target.value)}
-                />
-                <TextField id="date" label="Date" type="date" variant="outlined"
-                  defaultValue="24-05-2017"
-                  className={classes.textField}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  value={date}
-                  onChange={(e)=>setDate(e.target.value)}
-                />
-                <TextField id="outlined-basic" label="Location" variant="outlined"
-                value={location}
-                onChange={(e)=>setLocation(e.target.value)}
-                />
-                <TextField id="outlined-select-currency-native" select label="Category" 
-                  value={category} 
-                  onChange={handleCategory}
-                  SelectProps={{native: true,}}
-                  variant="outlined"
-                >
-                  {categories.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                  ))}
-                </TextField>
-                <TextField id="outlined-basic" label="Description" variant="outlined" fullWidth 
-                value={description}
-                onChange={(e)=>setDescription(e.target.value)}
-                />
-            </form>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullScreen>
+        <Paper elevation={6} style={paperStyle}>
+        <h1>Add Story</h1>
+          <form className={classes.root} noValidate autoComplete="off">
+            <TextField id="outlined-basic" label="Story Title" variant="outlined" fullWidth
+              value={title}
+              onChange={(e)=>setTitle(e.target.value)}
+            />
+            <TextField id="date" label="Date" type="date" variant="outlined"
+              style = {{width: 484}}
+              defaultValue="24-05-2017"
+              className={classes.textField}
+              InputLabelProps={{shrink: true,}}
+              value={date}
+              onChange={(e)=>setDate(e.target.value)}
+            />
+            <TextField id="outlined-basic" label="Location" variant="outlined"
+              style = {{width: 484}}
+              value={location}
+              onChange={(e)=>setLocation(e.target.value)}
+            />
+            <TextField id="outlined-select-currency-native" select label="Category" fullWidth
+              value={category} 
+              onChange={handleCategory}
+              SelectProps={{native: true,}}
+              variant="outlined"
+            >
+              {categories.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+              ))}
+            </TextField>
+            <TextField id="outlined-basic" label="Description" variant="outlined" fullWidth 
+              multiline="true"
+              minRows="6"
+              maxRows="6"
+              value={description}
+              onChange={(e)=>setDescription(e.target.value)}
+            />
+          </form>
+          <Box display="flex" justifyContent="center" alignItems="center">
             <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleClick} color="primary">
-            Submit
-          </Button>
-        </DialogActions>
-          </Paper>
-        </Dialog>
-        <h1>Stories</h1>
-        <Grid container className={classes.gridContainer} spacing={4} direction="row">
-          {stories.map(story=>(
-            <ButtonBase key={story.id} onClick={() => handleCardClickOpen(story.id)}>
-              <Card elevation={10} key={story.id} className={classes.cardStyle} onClick={() => handleCardClickOpen(story.id)}>
-                  Title: {story.title}<br/>
-                  Date: {story.date}<br/>
-                  Location: {story.location}<br/>
-                  Category: {story.category}<br/>
-              </Card>
-            </ButtonBase>
-          ))}
+              <Button onClick={handleClose} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleClick} color="primary" endIcon={<SendIcon/>}>
+                Submit
+              </Button>
+            </DialogActions>
+          </Box>
+        </Paper>
+      </Dialog>
+      <h1>Stories</h1>
+      <Grid container className={classes.gridContainer} spacing={4} direction="row">
+        {stories.map(story=>(
+          <ButtonBase key={story.id} onClick={() => handleCardClickOpen(story.id)}>
+            <Card elevation={10} key={story.id} className={classes.cardStyle}>
+              <Typography className={classes.title} color="textSecondary" gutterBottom>
+                {story.category}
+              </Typography>
+              <Typography variant="h5" component="h2">
+                {story.title}
+              </Typography>
+              <Typography variant="body2" component="p">
+                {story.location}<br/>
+              </Typography>
+              <Typography variant="body2" component="p">
+                {story.date}<br/>
+              </Typography>
+            </Card>
+          </ButtonBase>
+        ))}
       </Grid>
       <Dialog open={openCard} onClose={handleCardClickClose} aria-labelledby="form-dialog-title">
         <Paper elevation={3} style={paperStyle}>
-          <h3>{story.title}</h3>
+        <h3>{story.title}</h3>
           <Card elevation={6} id={story.id} className={classes.cardStyle} key={story.id} onClick={handleCardClickOpen}>
             <h5>Date</h5>{story.date}<br/>
             <h5>Location</h5> {story.location}<br/>
             <h5>Category</h5> {story.category}<br/>
             <h5>Description</h5> {story.description}<br/>
           </Card>
-          <Button onClick={handleCardClickClose} color="primary">
-            Cancel
-          </Button>
-          <Button color="primary">
-            Join +
-          </Button>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Button onClick={handleCardClickClose} color="primary">
+              Cancel
+            </Button>
+            <Button color="primary" endIcon={<EditIcon/>} onClick={() => handleEditCardOpen(story.id)}>
+              Edit
+            </Button>
+          </Box>
+        </Paper>
+      </Dialog>
+      <Dialog open={openEditCard} onClose={handleEditCardClose} aria-labelledby="form-dialog-title" fullScreen>
+        <Paper elevation={6} style={paperStyle}>
+        <h3>Edit Story</h3>
+          <form className={classes.root} noValidate autoComplete="off">
+            <TextField id="outlined-basic" placeholder={story.title} variant="outlined" fullWidth
+              value={title}
+              onChange={(e)=>setTitle(e.target.value)}
+            />
+            <TextField id="date" label="Date" type="date" variant="outlined"
+              style = {{width: 317}}
+              defaultValue="01-01-2022"
+              className={classes.textField}
+              InputLabelProps={{shrink: true,}}
+              placeholder={story.date}
+              value={date}
+              onChange={(e)=>setDate(e.target.value)}
+            />
+            <TextField id="outlined-basic" placeholder={story.location} variant="outlined"
+              style = {{width: 318}}
+              value={location}
+              onChange={(e)=>setLocation(e.target.value)}
+            />
+            <TextField id="outlined-select-currency-native" select label="Category" fullWidth
+              value={category} 
+              onChange={handleCategory}
+              SelectProps={{native: true,}}
+              variant="outlined"
+            >
+              {categories.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </TextField>
+            <TextField id="outlined-basic" placeholder={story.description} variant="outlined" fullWidth 
+              multiline="true"
+              minRows="6"
+              maxRows="6"
+              value={description}
+              onChange={(e)=>setDescription(e.target.value)}
+            />
+          </form>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <DialogActions>
+              <Button onClick={handleEditCardClose} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={() => updateCardClick(story.id)} color="primary" endIcon={<SendIcon/>}>
+                Update
+              </Button>
+            </DialogActions>
+          </Box>
         </Paper>
       </Dialog>
     </Container>

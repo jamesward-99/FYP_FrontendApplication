@@ -9,15 +9,6 @@ class ActivityService{
         })
         .then(res=>res.json());
     }
-
-    /*updateActivity(id){
-        console.log("Updating ID...",id)
-        return fetch(ACTIVITY_API_BASE_URL+id,{
-            method:'PUT',
-            headers:{"Content-Type":"application/json"}
-        })
-        .then(res=>res.json());
-    } */
 }
 
 export default new ActivityService();
